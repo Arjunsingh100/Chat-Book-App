@@ -1,0 +1,112 @@
+:root {
+    --color-secondary: #bf1650;
+    --color-light-pink: #ec5990;
+    --color-primary: #0e101c;
+    --color-blue: #1e2a4a;
+    --color-button-blue: #191d3a;
+    --color-light-blue: #516391;
+    --color-link: #ff7aa8;
+    --color-medium-blue: #4f6294;
+    --color-black: #2d2d2d;
+    --color-purple: #0f111b;
+    --color-grey: #333;
+    --color-light-grey: #ccc;
+    --color-green: #2ecc71;
+    --color-orange: #e67e22
+}
+.registeration-form,
+form {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    top: 2rem;
+    bottom: 2rem;
+    border: 2px solid var(--color-light-pink);
+    border-radius: 20px;
+    row-gap: 1rem;
+    background: var(--color-medium-blue);
+}
+
+.registeration-form,
+form .name-input,
+.email-input,
+.phone-input,
+.password-input {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+.registeration-form form .password-input {
+    position: relative;
+} 
+.registeration-form,
+form input {
+    width: 200px;
+    height: 40px;
+    border: var(--color-link);
+    outline: none;
+    border-radius: 8px;
+    padding-left: 8px;
+    font-size: 17px;
+}
+
+.registeration-form,
+form .submit-btn button {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    color: white;
+    background-color: var(--color-light-pink);
+}
+
+.registeration-form form .submit-btn :hover button {
+    letter-spacing: 5px;
+    border: 1px solid sandybrown;
+}
+
+.login-form form {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 2rem;
+    bottom: 2rem;
+    border: 2px solid var(--color-light-pink);
+    border-radius: 20px;
+    row-gap: 1rem;
+    background: var(--color-blue);
+}
+
+.login-form form .username-input, .password-input {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    position: relative;
+}
+.login-form form label,h2 {
+    color: var(--color-light-grey);
+}
+.login-form form input {
+    width: 200px;
+    height: 40px;
+    border: 1px solid var(--color-link);
+    outline: none;
+    border-radius: 8px;
+    padding-left: 8px;
+    font-size: 17px;
+}
+
+.login-form form .submit-btn button {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    color: white;
+    background-color: var(--color-light-pink);
+}
+
+ 
