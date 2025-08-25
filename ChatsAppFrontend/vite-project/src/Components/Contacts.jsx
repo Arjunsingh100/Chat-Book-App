@@ -7,9 +7,11 @@ import axios from 'axios';
 const Contacts = (props) => {
   const { contacts, handleSearchedContacts, changeChat, currentUser } = props;
   const [addFriend, setAddFriend] = useState(false);
+  const [currentSelect, setCurrentSelect] = useState(undefined);
 
-  const changeCurrentChat = async (user) => {
+  const changeCurrentChat = async (user, index) => {
     changeChat(user)
+    setCurrentSelect(index)
     if (addFriend) {
       const isFriend = currentUser?.data?.friends?.includes(`${user?._id}`);
       if (!isFriend) {
@@ -31,16 +33,18 @@ const Contacts = (props) => {
       <div className="brand">
         <h2>Chat Book App</h2>
       </div>
-      <div style={{width: '100%'}}>
+      <div style={{ width: '100%' }}>
         <SearchHeader handleAddFriend={handleAddFriend} searchedFriends={searchedFriends} />
       </div>
       <div className="contacts">
         {
           contacts?.map((user, index) => {
             return (
-              <div key={user._id} className="contacts" onClick={() => { changeCurrentChat(user) }}>
-                <div className="contact">
+              <div className={`contact ${index == currentSelect ? "selected" : ""}`} key={index} onClick={() => { changeCurrentChat(user, index) }}>
+                 <div>
                   <img src={profilePhoto}></img>
+                 </div>
+                <div style={{width: '50%', display: 'flex', flexDirection:'row', justifyContent: 'flex-end'}}>
                   <h2>{user.username}</h2>
                 </div>
               </div>
@@ -88,7 +92,7 @@ flex-direction: row;
 overflow-y: auto;
 justify-content: space-around;
 align-items: center;
-background-color: #333;
+background-color: #++333;
 border-radius: 10px;
 border-top: 2px solid #ff7aa8;
 img {
@@ -96,6 +100,12 @@ width: 50px;
 height: 50px;
 border-radius: 50%;
 }
+}
+.selected {
+background-color: #9a86f3;
+}
+.contact: hover {
+background-color: #ec5990;
 }
 }
 .current-user {

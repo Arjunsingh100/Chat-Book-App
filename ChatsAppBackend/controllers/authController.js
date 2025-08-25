@@ -50,6 +50,7 @@ module.exports.loginController = async (req, res) => {
 module.exports.sentOtpController = async (req, res) => {
     try {
         const { email } = req.body;
+        console.log(email)
         const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
         const expiry = Date.now() + 5 * 60 * 1000; // 5 minutes
 

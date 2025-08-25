@@ -57,3 +57,16 @@ width: 4px;
 background: #ff7aa8;
 border-radius: 0px;
 }
+.message-header {
+  display: inline-block;
+  background-color: #e5e7eb; /* light gray */
+  color: #374151;           /* dark gray text */
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-left: 45%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}

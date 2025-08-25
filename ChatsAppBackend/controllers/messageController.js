@@ -4,8 +4,10 @@ const messageModel = require('../models/messageModel')
 module.exports.retrieveAllMessages = async (req, res) => {
     try {
         const { from, to} = req.body;
-        const messages = await messageModel.find({chat: 'to',sender: from}).sort({_id: 1});
-        res.status(200).send({success: true, message: 'Messages retrieved successfully', messages: messages})
+        const messages = await messageModel.find({ 
+            $or: [{chat: to, sender: from},{sender: to, chat: from}]
+        }).sort({_id: 1});
+        res.status(200).send({success: true, message: 'Messages retrieved successfully', allMessages: messages})
     } catch (error) {
         res.status(400).send({success: false, message: 'Facing error while fetching messages from db'})
     }

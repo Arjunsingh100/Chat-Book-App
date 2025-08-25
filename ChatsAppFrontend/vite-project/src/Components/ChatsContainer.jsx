@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import '../stylesheet/messagesStyle.css'
-import { NavLink } from 'react-router-dom';
+import { data, NavLink } from 'react-router-dom';
 import { CiMenuBurger } from "react-icons/ci";
 import styled from 'styled-components'
 import ChatInput from './ChatInput'
@@ -9,13 +9,14 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { useAuth } from '../Context/auth';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
+import { format, isToday, isYesterday } from "date-fns";
 
 const ChatsContainer = (props) => {
    const [auth, setAuth] = useAuth();
-   const [messages, setMessage] = useState([])
+   const [messages, setMessages] = useState([])
    const navigate = useNavigate();
-   const { currentChat } = props;
-
+   const { currentChat, currentUser } = props;
 
    const toastStyle = {
       position: "top-right",
@@ -39,15 +40,61 @@ const ChatsContainer = (props) => {
       toast.success('You have logout successfully')
       console.log('You have logout success fully')
    }
-   
+
 
    const handleSendMessage = async (msg) => {
       try {
+         // setMessages([...messages, msg]);
          console.log(msg)
+         const createMessage = await axios.post('http://localhost:5000/api/v1/message/createMessage',
+            { from: currentUser?.data?._id, to: currentChat?._id, message: msg })
       } catch (error) {
          console.log(error)
       }
    }
+   const groupedMessageArr = (allMessages) => {
+      const groupedMessagesArr = [];
+      allMessages?.map((msg, index) => {
+         const date = format(new Date(msg?.createdAt), "yyyy-MM-dd")
+         const hasKey = groupedMessagesArr.some((ele) => {
+            return date in ele;
+         })
+         if (!hasKey) {
+            groupedMessagesArr.push({ [date]: [] })
+         }
+         const indexOfGroup = groupedMessagesArr.findIndex((ele, ind) => {
+            return date in ele;
+         })
+         return groupedMessagesArr[indexOfGroup]?.[date]?.push(msg)
+      })
+      setMessages(groupedMessagesArr)
+   }
+   //Helpers to format date headers
+   const formatDateHelper = (dateKey) => {
+      const date = new Date(dateKey);
+      if (isToday(date)) {
+         return "Today";
+      }
+      if (isYesterday(dateKey)) {
+         return "Yesterday"
+      }
+      return format(date, "MMMM d, yyyy")
+   }
+   const fetchAllMessages = async () => {
+      try {
+         const { data } = await axios.post('http://localhost:5000/api/v1/message/fetchMessages',
+            { from: currentUser?.data?._id, to: currentChat?._id })
+         console.log(data)
+         // setMessages(data?.allMessages)
+         groupedMessageArr(data?.allMessages);
+      } catch (error) {
+         console.log(error)
+      }
+   }
+   useEffect(() => {
+      setMessages([])
+      fetchAllMessages();
+   }, [currentChat])
    return (
       <Container>
          <div className="chats-container">
@@ -71,72 +118,32 @@ const ChatsContainer = (props) => {
             </div>
          </div>
          <div className="message-container">
-            <div className="bubbleWrapper">
-               <div className="inlineContainer">
-                     <div className="otherBubble other">
-                        No ninjas!
+            {messages.map((dateKey, index) => {
+               return (
+                  <div key={index}>
+                     <div key={index}>
+                        <div className='message-header'>
+                           {formatDateHelper(Object.keys(dateKey)[0])}
+                        </div>
                      </div>
-               </div><span className="other">08:41</span>
-            </div>
-            <div className="bubbleWrapper">
-               <div className="inlineContainer own">
-                     <div className="ownBubble own">
-                        The first rule of being a ninja is, 'Do no harm.'
-                     </div>
-               </div><span className="own">08:55</span>
-            </div>
-            <div className="bubbleWrapper">
-               <div className="inlineContainer">
-                     <div className="otherBubble other">
-                        Knowing when to leave requires training.
-                     </div>
-               </div>
-            </div><span className="other">10:13</span>
-            <div className="bubbleWrapper">
-               <div className="inlineContainer own">
-                     <div className="ownBubble own">
-                        Stunned but impressed.
-                     </div>
-               </div><span className="own">11:07</span>
-            </div>
-            <div className="bubbleWrapper">
-               <div className="inlineContainer">
-                     <div className="otherBubble other">
-                        How about throwing stars?
-                     </div>
-               </div><span className="other">11:11</span>
-            </div>
-             <div className="bubbleWrapper">
-               <div className="inlineContainer">
-                     <div className="otherBubble other">
-                        How about throwing stars?
-                     </div>
-               </div><span className="other">11:11</span>
-            </div>
-             <div className="bubbleWrapper">
-               <div className="inlineContainer">
-                     <div className="otherBubble other">
-                        How about throwing stars?
-                     </div>
-               </div><span className="other">11:11</span>
-            </div>
-             <div className="bubbleWrapper">
-               <div className="inlineContainer">
-                     <div className="otherBubble other">
-                        How about throwing stars?
-                     </div>
-               </div><span className="other">11:11</span>
-            </div>
-             <div className="bubbleWrapper">
-               <div className="inlineContainer">
-                     <div className="otherBubble other">
-                        How about throwing stars?
-                     </div>
-               </div><span className="other">11:11</span>
-            </div>
+                     {dateKey[Object?.keys(dateKey)[0]]?.map((message,index) => {
+                        return (
+                           <div key={index} className="bubbleWrapper">
+                              <div className={`inlineContainer ${currentUser?.data?._id == message?.sender ? "own" : ""}`}>
+                                 <div className={`${currentUser?.data?._id == message?.sender ? "ownBubble own" : "otherBubble other"}`}>
+                                    {message?.content}
+                                 </div>
+                              </div><span className={`${currentUser?.data?._id == message?.sender ? "own" : "other"}`}>{format(new Date(message.createdAt), "hh:mm")}</span>
+                           </div>
+                        )
+                     })}
+                  </div>
+
+               )
+            })}
          </div>
          <div className="msg-send-container">
-            <ChatInput handleSendMessage = {handleSendMessage}/>
+            <ChatInput handleSendMessage={handleSendMessage} />
          </div>
       </Container>
    )
